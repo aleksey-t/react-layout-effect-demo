@@ -1,60 +1,33 @@
 import React from "react";
-import {AppContext} from "../App";
 import ToolTip from "./ToolTip";
 
 export default function ButtonWithTooltip(props) {
-    const [top, setTop] = React.useState(0);
+    const [targetBoundingRect, setTargetBoundingRect] = React.useState(null);
     const [isTooltipVisible, setIsTooltipVisible] = React.useState(false);
-    const ref = React.useRef(null);
-    const {
-        appHeight,
-        scrollTop
-    } = React.useContext(AppContext);
+    const buttonRef = React.useRef(null);
 
     function handlePointerEnter() {
-        const boundingRect = ref.current.getBoundingClientRect();
-        console.log('boundingRect', boundingRect);
+        const buttonBoundingRect = buttonRef.current.getBoundingClientRect();
         setIsTooltipVisible(true);
-
-        console.log('appHeight', appHeight)
-        console.log('scrollTop', scrollTop)
+        setTargetBoundingRect(buttonBoundingRect);
     }
 
     function handlePointerOut() {
-        const boundingRect = ref.current.getBoundingClientRect();
-        console.log('boundingRect', boundingRect);
         setIsTooltipVisible(false);
     }
 
-    React.useEffect(() => {
-        const boundingRect = ref.current.getBoundingClientRect();
-
-        setTop(boundingRect.y);
-
-
-    }, [appHeight, scrollTop]);
-
-    return <span style={{position: 'relative'}}>
-            <div
-                style={{
-                    height: '140px',
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                }}
-                ref={ref}
-            >
+    return <span style={{position: 'relative', display: 'flex', flexDirection:'column'}}>
                 <button
-                    ref={ref}
+                    ref={buttonRef}
                     onPointerEnter={handlePointerEnter}
                     onPointerOut={handlePointerOut}
                 >
                     Hover to see a tooltip
                 </button>
-            </div>
         {
             isTooltipVisible ? <ToolTip
                 tooltipContents={props.tooltipContents}
-                top={top}
+                targetBoundingRect={targetBoundingRect}
             /> : ''
         }
         </span>;

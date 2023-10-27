@@ -3,30 +3,14 @@ import React, {createContext, useEffect, useRef, useState} from "react";
 import './App.css';
 import ButtonWithTooltip from "./components/ButtonWithTooltip";
 
-export const AppContext = createContext({
-    appHeight: undefined,
-    scrollTop: undefined,
-});
+export const AppContext = createContext(null);
 
 function App() {
     const appRef = useRef(null);
-    const [appHeight, setAppHeight] = useState(0);
-    const [scrollTop, setScrollTop] = useState(0);
+    const [appBoundingRect, setAppBoundingRect] = useState();
 
     useEffect(() => {
-        const appElement = appRef.current;
-        const rect = appElement.getBoundingClientRect();
-        setAppHeight(rect.height);
-
-        function handleScroll() {
-            setScrollTop(appElement.scrollTop);
-        }
-
-        appElement.addEventListener('scroll', handleScroll);
-
-        return () => {
-            appElement.removeEventListener('scroll', handleScroll);
-        }
+        setAppBoundingRect(appRef.current.getBoundingClientRect())
     }, []);
 
     return <div
@@ -40,36 +24,40 @@ function App() {
         }}
         ref={appRef}
     >
-        <AppContext.Provider
-            value={{
-                appHeight,
-                scrollTop
-            }}>
+        <AppContext.Provider value={appBoundingRect}>
             <h1>A demo example of React useLayoutEffect hook</h1>
-            <ButtonWithTooltip
-                tooltipContents={
-                    <div>
-                        tooltip
-                    </div>
-                }
-                buttonText="Hover to see a tooltip"
-            />
-            <ButtonWithTooltip
-                tooltipContents={
-                    <div>
-                        tooltip 2
-                    </div>
-                }
-                buttonText="Hover to see a tooltip 2"
-            />
-            <ButtonWithTooltip
-                tooltipContents={
-                    <div>
-                        tooltip 3
-                    </div>
-                }
-                buttonText="Hover to see a tooltip 3"
-            />
+            <ul>
+                <li className="card">
+                    <ButtonWithTooltip
+                        tooltipContents={
+                            <div>
+                                tooltip
+                            </div>
+                        }
+                        buttonText="Hover to see a tooltip"
+                    />
+                </li>
+                <li className="card">
+                    <ButtonWithTooltip
+                        tooltipContents={
+                            <div>
+                                tooltip 2
+                            </div>
+                        }
+                        buttonText="Hover to see a tooltip 2"
+                    />
+                </li>
+                <li className="card">
+                    <ButtonWithTooltip
+                        tooltipContents={
+                            <div>
+                                tooltip 3
+                            </div>
+                        }
+                        buttonText="Hover to see a tooltip 3"
+                    />
+                </li>
+            </ul>
         </AppContext.Provider>
     </div>
 }
